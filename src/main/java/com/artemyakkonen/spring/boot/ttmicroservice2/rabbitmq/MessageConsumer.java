@@ -1,4 +1,4 @@
-package com.artemyakkonen.spring.boot.ttmicroservice2.consumer;
+package com.artemyakkonen.spring.boot.ttmicroservice2.rabbitmq;
 
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -10,6 +10,6 @@ public class MessageConsumer {
 
     @RabbitHandler
     public void receiveMessage(String message) {
-        System.out.println("Received: " + message);
+        System.out.println("Received \n" + message);
     }
 }
