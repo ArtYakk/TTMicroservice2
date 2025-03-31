@@ -1,11 +1,8 @@
 package com.artemyakkonen.spring.boot.ttmicroservice2.service;
 
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.ActivityDTO;
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.MessageDTO;
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserDTO;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserRequest;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserResponse;
 import com.artemyakkonen.spring.boot.ttmicroservice2.entity.User;
-import com.artemyakkonen.spring.boot.ttmicroservice2.mapper.ActivityMapper;
-import com.artemyakkonen.spring.boot.ttmicroservice2.mapper.MessageMapper;
 import com.artemyakkonen.spring.boot.ttmicroservice2.mapper.UserMapper;
 import com.artemyakkonen.spring.boot.ttmicroservice2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -26,42 +23,31 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> getAllUsers(){
-        return UserMapper.toUserDTOList(userRepository.findAll());
+    public List<UserResponse> getAllUsers(){
+        return userRepository.findAll().stream().map(UserMapper::toResponse).collect(Collectors.toList());
     }
 
-    public List<UserDTO> getActiveUsers(){
-        return UserMapper.toUserDTOList(userRepository.findByActivitiesIsNotEmpty());
+    public List<UserResponse> getActiveUsers(){
+        return userRepository.findByActivitiesIsNotEmpty().stream().map(UserMapper::toResponse).collect(Collectors.toList());
     }
 
     public void deleteUserById(Long id){
             userRepository.deleteById(id);
     }
 
-    public UserDTO getUserById(Long id){
-        User user =  userRepository.findById(id).orElse(null);
-        if(user != null) {
-            return UserMapper.toUserDTO(user);
-        }
-        return null;
+    public User getUserById(Long id){
+        return userRepository.findById(id).orElse(null);
     }
 
     @Transactional
-    public UserDTO getUserByUuid(String uuid){
-      User user =  userRepository.findByUuid(uuid).orElse(null);
-      if(user != null) {
-          return UserMapper.toUserDTO(user);
-      }
-      return null;
+    public UserResponse getUserByUuid(String uuid){
+      return UserMapper.toResponse(userRepository.findByUuid(uuid).orElse(null));
     }
 
-
     @Transactional
-    public URI addUser(User user){
-       User savedUser = userRepository.save(user);
-        return UriComponentsBuilder.fromPath("/users/{id}")
-                .buildAndExpand(savedUser.getId())
-                .toUri();
+    public UserResponse addUser(UserRequest userRequest){
+       User savedUser = userRepository.save(UserMapper.fromRequest(userRequest));
+        return UserMapper.toResponse(savedUser);
     }
 
 

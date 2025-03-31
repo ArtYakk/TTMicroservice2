@@ -1,36 +1,33 @@
 package com.artemyakkonen.spring.boot.ttmicroservice2.mapper;
 
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.MessageDTO;
-import com.artemyakkonen.spring.boot.ttmicroservice2.entity.Message;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.MessageRequest;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.MessageResponse;
+import com.artemyakkonen.spring.boot.ttmicroservice2.entity.Message;
 
 public class MessageMapper {
 
-    public static MessageDTO toMessageDTO(Message message) {
-        if(message == null) {return null;}
-        return MessageDTO.builder()
+    public static MessageResponse toResponse(Message message) {
+        if (message == null) {
+            return null;
+        }
+
+        return MessageResponse.builder()
                 .id(message.getId())
+                .user_id(message.getUser() != null ? message.getUser().getId() : null)
                 .body(message.getBody())
                 .time(message.getTime())
                 .build();
     }
 
-    public static Message toMessage(MessageDTO messageDTO) {
-        if(messageDTO == null) {return null;}
+    public static Message fromRequest(MessageRequest messageRequest) {
+        if (messageRequest == null) {
+            return null;
+        }
+
         return Message.builder()
-                .id(messageDTO.getId())
-                .body(messageDTO.getBody())
-                .time(messageDTO.getTime())
+                .body(messageRequest.getBody())
+                .time(messageRequest.getTime())
                 .build();
-    }
-
-    public static List<MessageDTO> toMessageDTOList(List<Message> messageList) {
-        return messageList.stream().map(MessageMapper::toMessageDTO).collect(Collectors.toList());
-    }
-
-    public static List<Message> toMessageList(List<MessageDTO> messageDTOList) {
-        return messageDTOList.stream().map(MessageMapper::toMessage).collect(Collectors.toList());
     }
 }

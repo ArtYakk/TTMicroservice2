@@ -1,12 +1,9 @@
 package com.artemyakkonen.spring.boot.ttmicroservice2.repository;
 
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserDTO;
-import com.artemyakkonen.spring.boot.ttmicroservice2.entity.Message;
 import com.artemyakkonen.spring.boot.ttmicroservice2.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 

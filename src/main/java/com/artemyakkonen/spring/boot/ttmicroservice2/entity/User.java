@@ -19,7 +19,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User { //id, uuid(string), role
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

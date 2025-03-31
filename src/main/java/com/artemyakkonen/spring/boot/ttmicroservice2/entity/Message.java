@@ -1,5 +1,6 @@
 package com.artemyakkonen.spring.boot.ttmicroservice2.entity;
 
+import com.artemyakkonen.spring.boot.ttmicroservice2.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

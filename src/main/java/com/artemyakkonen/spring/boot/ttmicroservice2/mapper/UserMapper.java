@@ -1,40 +1,40 @@
 package com.artemyakkonen.spring.boot.ttmicroservice2.mapper;
 
-import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserDTO;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserRequest;
+import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserResponse;
 import com.artemyakkonen.spring.boot.ttmicroservice2.entity.User;
+import com.artemyakkonen.spring.boot.ttmicroservice2.entity.Activity;
+import com.artemyakkonen.spring.boot.ttmicroservice2.entity.Message;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 public class UserMapper {
 
-    public static UserDTO toUserDTO(User user) {
-        if(user == null) {return null;}
-        return UserDTO.builder()
+    public static UserResponse toResponse(User user) { //id, uuid, role ,activities, messages
+        if(user == null) {
+            return null;
+        }
+
+        return UserResponse.builder()
                 .id(user.getId())
                 .uuid(user.getUuid())
                 .role(user.getRole())
-                .activities(ActivityMapper.toActivityDTOList(user.getActivities()))
-                .messages(MessageMapper.toMessageDTOList(user.getMessages()))
+                .activityIds(user.getActivities().stream().map(Activity::getId).toList())
+                .messageIds(user.getMessages().stream().map(Message::getId).toList())
                 .build();
     }
 
-    public static User toUser(UserDTO userDTO) {
-        if(userDTO == null) {return null;}
+    public static User fromRequest(UserRequest userRequest) {
+        if(userRequest == null) {
+            return null;
+        }
+
         return User.builder()
-                .id(userDTO.getId())
-                .uuid(userDTO.getUuid())
-                .role(userDTO.getRole())
-                .activities(ActivityMapper.toActivityList(userDTO.getActivities()))
-                .messages(MessageMapper.toMessageList(userDTO.getMessages()))
+                .uuid(userRequest.getUuid())
+                .role(userRequest.getRole())
+                .messages(new ArrayList<>())
+                .activities(new ArrayList<>())
                 .build();
     }
 
-    public static List<UserDTO> toUserDTOList(List<User> userList) {
-        return userList.stream().map(UserMapper::toUserDTO).collect(Collectors.toList());
-    }
-
-    public static List<User> toUserList(List<UserDTO> userDTOList) {
-        return userDTOList.stream().map(UserMapper::toUser).collect(Collectors.toList());
-    }
 }
