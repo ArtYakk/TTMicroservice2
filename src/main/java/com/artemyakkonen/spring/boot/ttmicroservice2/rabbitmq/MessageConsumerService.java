@@ -6,6 +6,7 @@ import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserRequest;
 import com.artemyakkonen.spring.boot.ttmicroservice2.dto.UserResponse;
 import com.artemyakkonen.spring.boot.ttmicroservice2.dto.rabbit.RabbitMessageDTO;
 
+import com.artemyakkonen.spring.boot.ttmicroservice2.service.ActivityService;
 import com.artemyakkonen.spring.boot.ttmicroservice2.service.MessageService;
 import com.artemyakkonen.spring.boot.ttmicroservice2.service.UserService;
 import com.artemyakkonen.spring.boot.ttmicroservice2.util.AnsiColors;
@@ -23,13 +24,14 @@ public class MessageConsumerService {
 
     private final UserService userService; // Сервис для работы с пользователями
     private final MessageService messageService;
+    private final ActivityService activityService;
 
     @Autowired
-    public MessageConsumerService(UserService userService, MessageService messageService) {
+    public MessageConsumerService(UserService userService, MessageService messageService, ActivityService activityService) {
         this.userService = userService;
         this.messageService = messageService;
+        this.activityService = activityService;
     }
-
 
     @RabbitListener(queues = "myQueue")
     public void receiveMessage(RabbitMessageDTO rabbitMessage) {
@@ -48,7 +50,7 @@ public class MessageConsumerService {
                     .time(rabbitMessage.getTimestamp())
                     .type(rabbitMessage.getBody().equals("Activity") ? "ACTIVITY_STATUS" : "MESSAGE")
                     .build();
-
+            activityService.saveActivity(userResponse.getId(), activityRequest);
         }else {
             UserRequest userRequest = UserRequest.builder()
                     .role("USER")

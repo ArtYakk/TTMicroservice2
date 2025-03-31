@@ -45,6 +45,11 @@ public class UserService {
     }
 
     @Transactional
+    public User getUserByUuidNoDto(String uuid){
+        return userRepository.findByUuid(uuid).orElse(null);
+    }
+
+    @Transactional
     public UserResponse addUser(UserRequest userRequest){
        User savedUser = userRepository.save(UserMapper.fromRequest(userRequest));
         return UserMapper.toResponse(savedUser);
